@@ -1,0 +1,78 @@
+---
+title: "untitled"
+format: 
+  html:
+    toc: true
+    number-sections: true
+editor: source
+---
+# titulo principal
+
+## Subseção
+
+asdaisudhaiusd asdaisudhaiusd asdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdai asdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusd
+
+asdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdaisudhaiusdasdais
+
+*Expressão em italico*, expressão em negrito **asdkaos**
+
+## criando uma lista nao ordenada
+
+- item 1
+- item 2
+
+- item 3
+
+    - subitem 1
+     - subitem 2
+
+## criando uma lista ordenada
+
+1. item 1
+
+2. item 2
+
+    2.1 item 2.1
+    
+3. item 3
+
+## inserindo links para paginas da web
+
+[youtube canal](https://www.youtube.com/@MarlonLeal_){target="_blank"}
+
+## escrevendo matematica:
+
+integral:
+
+$$
+\int_{a}^{b} f(x)
+$$
+
+## celulas de codigo
+
+para inserir uma celula de codigo R em um arquivo quarto, podemos usar 
+o atalho 'ctrl + alt + i':
+
+```{r}
+#  simulando uma VA com distribuição normal padrao
+x <- rnorm(1000)
+
+# grafico de linha da variavel simulada:
+plot(x, type = "l")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
