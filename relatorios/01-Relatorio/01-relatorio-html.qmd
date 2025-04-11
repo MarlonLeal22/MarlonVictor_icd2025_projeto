@@ -6,11 +6,12 @@ author: "Seu Nome"
 date: 2025-04-02
 format: 
   html:
-    theme: cosmo
+    theme: quartz
     embed-resources: true
     toc: true
     number-sections: true
     code-fold: true
+    code-tools: true
 execute:
   message: false
   warning: false
@@ -328,7 +329,7 @@ ggplot(dados_destilaria_limpos, aes(x = fornecedor_malte, y = indicador_qualidad
   # Cria boxplots para representar a distribuição dos dados
   geom_boxplot() +
   # Aplica um tema minimalista para melhor visualização
-  theme_minimal() +
+  theme_dark() +
   # Define títulos e rótulos dos eixos
   labs(title = "Qualidade do Whisky por Fornecedor de Malte",
        x = "Fornecedor",
