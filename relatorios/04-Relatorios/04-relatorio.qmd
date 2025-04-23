@@ -2,7 +2,7 @@
 title: "Introdução à Manipulação de Dados com o Pacote dplyr"
 subtitle: "Disciplina: Introducão à Ciência de Dados"
 lang: pt-BR
-author: "Seu Nome"
+author: "Marlon Victor"
 date: 2025-04-23
 format: 
   html:
@@ -232,8 +232,10 @@ Mostrando que o gapminder já está no formato tidy:
 # exibe as 6 primeiras linhas do objeto gapminder
 head(gapminder)
 ```
-
-
+```{r}
+# exibe as ultimas 6 linhas do objeto gapminder
+tail(gapminder, 10)
+```
 
 
 
@@ -414,7 +416,9 @@ a expectativa de vida:
 
 ```{r}
 dados_expectativa <- gapminder %>%
-  select(___, ___, ___)
+  select(country, year, lifeExp)
+
+dados_expectativa
 ```
 
 
@@ -423,6 +427,9 @@ e PIB per capita.
 
 ```{r}
 # seu código aqui
+variaveis_selecionadas <- select(gapminder, -gdpPercap, -pop)
+
+variaveis_selecionadas
 ```
 
 
@@ -433,21 +440,17 @@ começam com a letra "c":
 
 ```{r}
 variaveis_com_c <- gapminder %>%
-  select(___(___))
+  select(starts_with("c"))
+
+variaveis_com_c
 ```
-
-
-```{r}
-# seu código aqui
-```
-
-
 
 4. Escreva o código para selecionar todas as variáveis desde "country" 
 até "pop" (em sequência na tabela).
 
 ```{r}
-# seu código aqui
+dados_expectativa <- gapminder %>% 
+  select()
 ```
 
 
