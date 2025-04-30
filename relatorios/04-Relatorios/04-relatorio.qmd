@@ -851,8 +851,9 @@ paises_classificados
 a população para milhões:
 
 ```{r}
-gapminder %>%
-  mutate(pop_em_milhoes = ___)
+dados_novavariavel <- gapminder %>%
+  mutate(pop_em_milhoes = pop / 1000000)
+head(dados_novavariavel)
 ```
 
 
@@ -872,7 +873,10 @@ seja "Sim" quando a população for maior que 50 milhões e "Não"
 caso contrário.
 
 ```{r}
-# seu codigo aqui
+dados_economia_grande <- gapminder %>%
+  mutate(economia_grande = ifelse(pop > 50000000, "Sim", "Não"))
+
+print(dadoseconomiagrande, n = Inf)
 ```
 
 
@@ -884,7 +888,15 @@ os países em três categorias baseadas na expectativa de vida:
 - "Alta": mais de 75 anos
 
 ```{r}
-# seu codigo aqui
+multiplas_categorias <- gapminder %>%
+  filter(year == 2007) %>%
+  mutate(categoria_expectativa = case_when(
+    lifeExp < 60 ~ "Baixa",
+    lifeExp >= 60 & lifeExp <= 75 ~ "Média",
+    lifeExp > 75 ~ "Alta"
+  ))
+
+print(multiplas_categorias, n = Inf)
 ```
 
 
@@ -977,8 +989,18 @@ vida por continente:
 
 ```{r}
 expectativa_por_continente <- gapminder %>%
-  group_by(___) %>%
-  summarize(expectativa_media = ___(___))
+  group_by(continent, lifeExp) %>%
+  summarize(
+    expectativa_media = mean(lifeExp),
+    grupos_analisados = n()
+  ) %>%
+  arrange(continent, year)
+
+expectativa_por_continente %>%
+  filter(continent) %>%
+  head(3)
+
+print(expectativa_por_continente)
 ```
 
 
