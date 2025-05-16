@@ -411,7 +411,13 @@ data frame **dados_vendas_longo**.
 de vendas por categoria e ordene do maior para o menor.
 
 ```{r}
-# seu código aqui
+vendas_totais_categoria <- dados_vendas_longo %>%
+  group_by(categoria) %>%
+  summarize(vendas_media = mean(valor_vendas)) %>%
+  arrange(desc(vendas_media))
+
+# visualiza o resultado
+vendas_totais_categoria
 ```
 
 
@@ -424,7 +430,14 @@ da categoria "Mobiliário" e mostre as vendas totais de cada produto
 desta categoria, ordenando do maior para o menor.
 
 ```{r}
-# seu código aqui
+vendas_mobiliario <- dados_vendas_longo %>%
+  filter(categoria == "Mobiliário") %>%
+  group_by(produto) %>%
+  summarize(vendas_totais = sum(valor_vendas)) %>%
+  arrange(desc(vendas_totais))
+
+# visualiza o resultado
+vendas_mobiliario
 ```
 
 
@@ -437,6 +450,24 @@ valor mínimo e o valor máximo para cada categoria, ordenando do maior
 para o menor valor total.
 
 ```{r}
+# Calcula o total mensal por categoria
+vendas_mensais_categoria <- dados_vendas_longo %>%
+  group_by(categoria, mes) %>%
+  summarize(vendas_mensais = sum(valor_vendas), .groups = "drop")
+
+# Calcula os indicadores por categoria
+desempenho_categoria <- vendas_mensais_categoria %>%
+  group_by(categoria) %>%
+  summarize(
+    total_vendas = sum(vendas_mensais),
+    media_mensal = mean(vendas_mensais),
+    minimo_mensal = min(vendas_mensais),
+    maximo_mensal = max(vendas_mensais)
+  ) %>%
+  arrange(desc(total_vendas))
+
+# Visualiza o resultado
+desempenho_categoria
 ```
 
 

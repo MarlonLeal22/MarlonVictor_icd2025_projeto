@@ -1,0 +1,248 @@
+---
+title: "Resolucão da Avaliação 1"
+subtitle: "Introdução à Ciência de Dados - 2025 <br> Bacharelado em Administração"
+author: "Marlon Victor Leal"
+title-block-banner: "#27445C"
+format:
+  html:
+    embed-resources: true
+    page-layout: article
+    toc: true
+    toc-location: left
+lang: "pt"
+date: 2025-05-14
+date-format: long
+execute: 
+  eval: false
+  echo: true
+  warning: false
+  message: false
+crossref:
+  fig-prefix: 'Fig.'
+  tbl-prefix: 'Tab.'
+---
+
+
+```{r}
+#| label: setup
+#| echo: false
+
+# configura a exibição de números
+options(digits = 3, scipen = 99)
+
+# pacotes utilizados
+library(here)
+library(tidyverse)
+library(kableExtra)
+```
+
+
+
+## Questão 1 
+
+
+**a)** 
+## Resposta: Avaliar como diferentes tipos de clientes (TYPE) e sua exposição a anúncios em vídeo (VIDEO_AD) impactam a taxa de conversão (CONVERTED) e o faturamento (TURNOVER) na loja online.
+
+
+**b)** 
+## Resposta: Então, a Lindsey quer "entender melhor os padrões de compra para otimizar campanhas de marketing e melhorar a experiência do cliente". Pra começar, eu recomendaria a análise descritiva. 
+## Justificativa: Antes de tentar prever o que vai acontecer (preditiva) ou dizer o que fazer (prescritiva), a gente precisa primeiro entender o que já aconteceu e como as coisas são agora. A análise descritiva vai ajudar a gente a resumir os dados que a Lindsey passou. Por exemplo, a gente pode ver qual a idade média dos clientes, qual o método de pagamento mais usado, qual a porcentagem de clientes que devolve produtos, ou qual o faturamento médio por tipo de cliente. Entender esses "padrões de compra" básicos é o primeiro passo. Sem saber o que está acontecendo (descritiva), fica difícil diagnosticar por que está acontecendo (diagnóstica) e muito mais ainda tentar otimizar as campanhas ou melhorar a experiência do cliente de forma eficaz. É como tirar uma foto da situação atual para saber onde a gente tá pisando.   
+
+
+
+## Questão 2 
+
+
+**a)** 
+
+```{r}
+# Importa o arquivo de dados
+
+## 1.1 Define o caminho relativo do arquivo em seu projeto RStudio
+caminho_arquivo <- here::here("dados/brutos/onlineshop.csv") 
+
+## 1.2 Importa o arquivo com a funçào read_csv
+dados_lojaonline <- readr::read_csv(caminho_arquivo)
+```
+
+
+**b)** 
+
+```{r}
+
+# Seu código aqui
+glimpse(dados_lojaonline)
+```
+
+
+**c.1)** 
+São 463 observações.
+
+
+
+**c.2)** 
+Cada linha da tabela (cada observação) parece representar um evento individual de interação ou transação de um cliente na loja online da destilaria em uma data específica.
+Mais detalhadamente, cada observação (linha) nos dá um conjunto de informações sobre:
+
+Quando o cliente acessou (DATE).
+Quem é o cliente (USER_ID, AGE, GENDER, TYPE de conhecimento de whisky, CREDIT_SCORE, tempo como cliente LIFETIME).
+O que aconteceu nessa interação/transação: qual método de pagamento foi usado (PAYMENT_METHOD), qual foi o valor da compra (TURNOVER), se houve devolução (SENDBACK), se o cliente viu um anúncio em vídeo (VIDEO_AD) e se ele adicionou o produto do anúncio ao carrinho (CONVERTED).
+Então, cada linha é tipo um print de uma visita ou compra de um cliente, com todos esses detalhes que a Lindsey compilou.
+
+
+
+## Questão 3 (8 pontos)
+
+### Tópico: Limpeza e Preparação dos Dados 
+
+**a)** 
+
+```{r}
+
+dados_lojaonline_limpos <- dados_lojaonline %>% 
+    # Renomeia as colunas para nomes mais simples em português
+   rename(
+      data = DATE,
+      id_cliente = USER_ID,
+      idade = AGE,
+      sexo = GENDER,
+      tipo = TYPE,
+      score_de_credito = CREDIT_SCORE,
+      tempo_da_conta = LIFETIME,
+      metodo_pagamento = PAYMENT_METHOD,
+      faturamento = TURNOVER,
+      devolucao = SENDBACK,
+      tipo_de_anuncio = VIDEO_AD,
+      convertido = CONVERTED
+   ) %>% 
+    # Converte cada variável para o tipo/classe adequado
+   mutate(
+      data = as.Date(data),
+      id_cliente = as.factor(id_cliente),
+      idade = as.integer(idade),
+      sexo = as.factor(sexo),
+      tipo = as.factor(tipo),
+      score_de_credito = factor(score_de_credito, ordered = TRUE),
+      tempo_da_conta = as.integer(tempo_da_conta),
+      metodo_pagamento = as.factor(metodo_pagamento),
+      faturamento = as.numeric(faturamento),
+      devolucao = as.logical(devolucao),
+      tipo_de_anuncio = as.logical(tipo_de_anuncio),
+      convertido = as.logical(convertido)
+   )
+
+# exibe a estrutura da data frame limpa
+dplyr::glimpse(dados_lojaonline_limpos)
+```
+
+
+**b)** 
+
+```{r}
+
+# Seu código aqui
+resumo_lojaonline <- summary(dados_lojaonline_limpos)
+
+resumo_lojaonline
+```
+
+
+**b.1)** 
+ron_swanson76 com 15 transacoes.
+
+
+**b.2)** 
+116 clientes não foram cadastrados por tipo.
+
+
+**b.3)** 
+
+- Faturamento médio = 182
+
+- Faturamento máximo = 718
+
+- Faturamento mínimo = 31
+
+
+
+
+## Questão 4 (10 pontos)
+
+ 
+**a)** 
+
+
+```{r}
+
+faturamento_medio_pagamento <- dados_lojaonline_limpos %>% 
+   group_by(metodo_pagamento) %>% 
+   summarize(faturamento_medio = mean(faturamento)) %>% 
+   arrange(desc(faturamento_medio))
+
+# exibe o resultado
+faturamento_medio_pagamento
+```
+
+
+
+**b)** 
+
+
+```{r}
+
+clientes_especificos <- dados_lojaonline_limpos %>% 
+   filter(id_cliente %in% c("ron_swanson76", "horst_lüning", "dorothy_parker")) %>% 
+   group_by(id_cliente) %>% 
+   summarize(faturamento_medio_clientes = mean(faturamento)) %>% 
+   arrange(desc(faturamento_medio_clientes))
+
+# exibe o resultado
+clientes_especificos
+```
+
+
+
+**c)** 
+
+
+```{r}
+
+dados_conversao <- dados_lojaonline_limpos %>% 
+   group_by(tipo_de_anuncio) %>% 
+   summarize(
+      total_de_clientes = n(),
+      porcentagem_de_conversao = mean(convertido),
+      faturamento_medio_por_anuncio = mean(faturamento)
+   )
+
+# exibe o resultado 
+dados_conversao
+```
+
+
+
+**d)** 
+
+
+```{r}
+
+analise_tipo_cliente <- dados_lojaonline_limpos %>%
+  # Agrupa os dados pelo tipo de cliente
+  group_by(tipo) %>%
+  # Calcula as estatísticas solicitadas para cada grupo
+  summarize(
+    total_transacoes = n(),
+    devolucao = mean(devolucao) * 100,  # Converte proporção para porcentagem
+    faturamento_medio = mean(faturamento),
+    faturamento_sem_devolucao = mean(faturamento[devolucao == FALSE])
+  )
+
+# exibe o resultado 
+analise_tipo_cliente
+```
+
+
+
+
+
