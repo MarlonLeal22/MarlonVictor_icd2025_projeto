@@ -2,7 +2,7 @@
 title: "Organização de Dados com o Pacote tidyr"
 subtitle: "Tipos Básicos de *joins* do Pacote dplyr"
 lang: pt-BR
-author: "Seu Nome"
+author: "Marlon Victor"
 date: 2025-05-16
 format: 
   html:
