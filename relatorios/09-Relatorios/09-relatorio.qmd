@@ -666,13 +666,45 @@ investimento:
 **Tarefas:**
 
 1. Calcule o lucro esperado de cada projeto
+```{r}
+
+```
 
 ```{r}
-# seu código aqui
+# Projeto A (Conservador)
+investimento_A <- 200000
+retornos_A <- c(220000, 280000, 320000)
+probabilidades_A <- c(0.3, 0.4, 0.3)
+
+# Calculando os lucros para o Projeto A
+lucros_A <- retornos_A - investimento_A
+
+# Calculando o lucro esperado para o Projeto A
+# O sum(lucros_A * probabilidades_A) multiplica cada lucro pela sua probabilidade
+# e depois soma todos esses resultados.
+lucro_esperado_A <- sum(lucros_A * probabilidades_A)
+
+# Projeto B (Arriscado)
+investimento_B <- 200000
+retornos_B <- c(180000, 260000, 400000)
+probabilidades_B <- c(0.2, 0.5, 0.3)
+
+# Calculando os lucros para o Projeto B
+lucros_B <- retornos_B - investimento_B
+
+# Calculando o lucro esperado para o Projeto B
+lucro_esperado_B <- sum(lucros_B * probabilidades_B)
+
+# Exibindo os resultados dos lucros esperados
+cat("--- Lucro Esperado dos Projetos ---\n")
+cat("Lucro esperado do Projeto A (Conservador): R$", lucro_esperado_A, "\n")
+cat("Lucro esperado do Projeto B (Arriscado): R$", lucro_esperado_B, "\n\n")
 ```
 
 
 2. Qual projeto escolheria baseado apenas no valor esperado?
+
+R: O projeto B por conta do retorno maior.
 
 
 3. Que informações adicionais seriam úteis para decidir?
