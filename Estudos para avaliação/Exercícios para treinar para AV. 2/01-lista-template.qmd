@@ -1,0 +1,419 @@
+---
+title: "Soluções da Lista de Exercícios - Treinamento para a Avaliação 2"
+subtitle: "Introdução à Ciência de Dados <br> Bacharelado em administração"
+author: "Prof. Dr. Washington S. da Silva"
+title-block-banner: "#27445C"
+format:
+  html:
+    embed-resources: true
+    toc: true
+    toc-location: left
+    code-copy: true
+    css: styles.css
+lang: "pt"
+date: 2025-06-13
+execute: 
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| echo: false
+
+# configura exibição de números
+options(digits = 5, scipen = 999)
+
+# carrega pacotes
+library(tidyverse)  # Inclui dplyr, tidyr, ggplot2...
+library(scales)     # pacote do tidyverse para formatação de números
+library(tidyquant)  # para importar dados do Yahoo Finance
+library(effectsize) # Carrega o pacote interprete_R
+```
+
+
+
+## Tópico: Distribuição Normal — Probabilidades e Quantis
+
+### Exercício 1
+
+
+
+## Solução do Exercício 1
+
+1. Qual a probabilidade de um pedido ser entregue em até **7 dias**?
+
+```{r}
+# Definindo a média e o desvio padrão para o tempo de entrega, conforme a loja online
+media_entrega <- 5
+desvio_padrao_entrega <- 2
+
+# Calculando a probabilidade de um pedido ser entregue em até 7 dias
+# pnorm(q = 7, mean = 5, sd = 2)
+prob_ate_7_dias <- pnorm(q = 7, mean = media_entrega, sd = desvio_padrao_entrega)
+
+# Exibindo o resultado
+paste("A probabilidade de um pedido ser entregue em até 7 dias é:", round(prob_ate_7_dias, 4))
+```
+
+2. Qual a probabilidade de a entrega demorar **mais de 10 dias**?
+
+```{r}
+# Reutilizando a média e o desvio padrão já definidos
+# media_entrega = 5
+# desvio_padrao_entrega = 2
+
+# Calculando a probabilidade de a entrega demorar mais de 10 dias
+# Primeiro, calculamos a probabilidade de a entrega ser ATÉ 10 dias
+prob_ate_10_dias <- pnorm(q = 10, mean = media_entrega, sd = desvio_padrao_entrega)
+
+# Depois, calculamos a probabilidade de ser MAIS DE 10 dias (o complemento)
+prob_mais_de_10_dias <- 1 - prob_ate_10_dias
+
+# Exibindo o resultado
+paste("A probabilidade de a entrega demorar mais de 10 dias é:", round(prob_mais_de_10_dias, 4))
+```
+
+3. Qual é o prazo máximo de entrega para que **80%** dos pedidos sejam 
+entregues até essa data?
+
+```{r}
+# Reutilizando a média e o desvio padrão já definidos
+# media_entrega = 5
+# desvio_padrao_entrega = 2
+
+# Calculando o prazo máximo de entrega para 80% dos pedidos
+# qnorm(p, mean, sd)
+# p: a probabilidade acumulada que queremos (0.80 para 80%)
+prazo_80_porcento <- qnorm(p = 0.80, mean = media_entrega, sd = desvio_padrao_entrega)
+
+# Exibindo o resultado
+paste("O prazo máximo de entrega para que 80% dos pedidos sejam entregues até essa data é de aproximadamente", round(prazo_80_porcento, 2), "dias.")
+```
+
+
+4. Forneça uma interpretação para os resultados obtidos em cada item.
+
+
+
+
+
+## Tópico: Valor-em-Risco (VaR) com Distribuição Normal
+
+### Exercício 2
+
+
+```{r}
+# Definindo os parâmetros do fundo
+retorno_medio_mensal <- 0.01   # 1%
+volatilidade_mensal <- 0.04    # 4%
+nivel_confianca <- 0.95      # 95%
+
+# Para o VaR de 95% de confiança, precisamos do quantil da cauda inferior de 1 - 0.95 = 0.05
+probabilidade_cauda_inferior <- 1 - nivel_confianca
+
+# Calculando o VaR percentual (o retorno no 5º percentil)
+# qnorm(p, mean, sd)
+# p: a probabilidade da cauda inferior (0.05 para 95% de confiança)
+# mean: o retorno médio mensal
+# sd: a volatilidade mensal
+var_percentual <- qnorm(p = probabilidade_cauda_inferior,
+                        mean = retorno_medio_mensal,
+                        sd = volatilidade_mensal)
+
+# Exibindo o resultado
+paste("O VaR mensal percentual com 95% de confiança é de:", round(var_percentual * 100, 4), "%")
+```
+
+
+Cálculo do VaR percentual:
+
+```{r}
+# Reutilizando o valor do VaR percentual calculado
+# var_percentual
+
+# Definindo o valor do investimento
+valor_investimento <- 50000
+
+# Calculando o VaR em reais (valor absoluto da perda)
+# Multiplicamos o percentual da perda pelo valor do investimento
+# Usamos -1 * para garantir que o VaR seja expresso como um valor de perda positivo
+var_em_reais <- -1 * var_percentual * valor_investimento
+
+# Exibindo o resultado
+print(paste("O VaR mensal com 95% de confiança em reais é de: R$", round(var_em_reais, 2)))
+```
+
+VaR em reais (valor absoluto da perda):
+
+```{r}
+
+```
+
+ 
+**Interpretação:**
+
+
+
+
+
+## Tópico: Simulação de Monte Carlo e Valor Esperado
+
+### Exercício 3
+
+1. Calcule o prêmio **justo** (valor esperado).
+
+```{r}
+# 1. Calcule o prêmio justo (valor esperado).
+
+# Vamos primeiro guardar os dados que a gente tem em variáveis claras.
+prob_roubo_anual <- 0.02    # 2% de probabilidade de roubo (em decimal)
+valor_indenizacao <- 4000   # Indenização de R$ 4.000
+
+# O prêmio justo é a chance de pagar vezes o quanto paga.
+premio_justo <- prob_roubo_anual * valor_indenizacao
+
+# Imprimir o resultado pra gente ver, arredondando pra 2 casas decimais (é dinheiro!)
+paste("O prêmio justo (valor esperado da indenização) é de: R$", round(premio_justo, 2))
+```
+
+2. Determine o prêmio com a margem de lucro.
+
+```{r}
+# 2. Determine o prêmio com a margem de lucro.
+
+# A gente já calculou o 'premio_justo' lá em cima!
+
+# Definindo a margem de lucro desejada pela seguradora
+margem_desejada <- 0.20 # 20% em decimal
+
+# Calculando o prêmio final. É o justo mais a margem.
+# Multiplicar por (1 + margem) é o jeito mais elegante de aumentar um valor percentual.
+premio_com_margem <- premio_justo * (1 + margem_desejada)
+
+# Mostrar o resultado final
+paste("O prêmio que a seguradora vai cobrar (com a margem de lucro) é de: R$", round(premio_com_margem, 2))
+```
+
+3. Simule 10.000 residências seguradas e estime o valor médio pago.
+
+```{r}
+# 3. Simule 10.000 residências seguradas e estime o valor médio pago.
+
+# A gente já tem 'prob_roubo_anual' e 'valor_indenizacao' definidos!
+
+# Quantas casas vamos simular?
+numero_residencias_simuladas <- 10000
+
+# Agora a simulação de Monte Carlo!
+# 'x = c(0, 1)': Os resultados possíveis - 0 para "não roubo", 1 para "roubo".
+# 'size = numero_residencias_simuladas': Vamos sortear para 10.000 casas.
+# 'replace = TRUE': Cada casa é um sorteio independente, então pode repetir o resultado.
+# 'prob = c(1 - prob_roubo_anual, prob_roubo_anual)':
+#   Essa parte é crucial! A chance de NÃO roubo (0) é 98% (1 - 0.02).
+#   A chance de roubo (1) é 2% (0.02).
+simulacao_roubos <- sample(x = c(0, 1),
+                           size = numero_residencias_simuladas,
+                           replace = TRUE,
+                           prob = c(1 - prob_roubo_anual, prob_roubo_anual))
+
+# Pra calcular o total que a seguradora pagou:
+# Cada 1 na 'simulacao_roubos' vira o 'valor_indenizacao', e cada 0 vira 0.
+# Depois é só somar tudo!
+valor_total_pago_simulado <- sum(simulacao_roubos * valor_indenizacao)
+
+# Agora, o valor médio pago por casa na nossa simulação.
+valor_medio_pago_simulado <- valor_total_pago_simulado / numero_residencias_simuladas
+
+# Vamos ver os resultados e comparar com o prêmio justo teórico!
+paste("Valor médio pago pela seguradora na simulação:", round(valor_medio_pago_simulado, 2))
+paste("Prêmio justo teórico (calculado na Parte 1): R$", round(premio_justo, 2))
+```
+
+
+**Interpretação:**
+
+
+
+
+## Tópico: Quantis e Tomada de Decisão em Administração
+
+### Exercício 4
+
+Os salários de 30 trainees são (execute o código abaixo para criar 
+o vetor `salarios`):
+
+```{r}
+salarios <- c(2300, 2500, 2200, 2400, 2800, 3000, 3200, 2500, 2100, 2700,
+              2600, 2300, 2900, 3100, 2000, 2800, 2600, 2500, 2750, 2250,
+              2900, 2300, 2600, 2700, 2950, 2450, 2550, 2650, 2400, 2750)
+```
+
+
+1. Calcule os quartis 1 (Q1), 2 (mediana) e 3 (Q3).
+
+```{r}
+# 1. Calcule os quartis 1 (Q1), 2 (mediana) e 3 (Q3).
+
+# A função quantile() é perfeita para isso!
+# Ela recebe o vetor de dados e uma porcentagem (ou vetor de porcentagens)
+# para calcular os percentis.
+# Para Q1, Q2 (mediana) e Q3, as porcentagens são 25%, 50% e 75%.
+quartis <- quantile(salarios, probs = c(0.25, 0.50, 0.75))
+
+# Exibindo os resultados dos quartis
+print("Os quartis dos salários são:")
+print(quartis)
+
+# Apenas para reforçar: a mediana pode ser calculada diretamente também:
+mediana_salarios <- median(salarios)
+print(paste("A mediana (Q2) dos salários é: R$", round(mediana_salarios, 2)))
+```
+
+2. Qual o salário máximo que **80%** dos trainees recebem?
+
+Estimativa do percentil 80:
+
+```{r}
+# 2. Qual o salário máximo que 80% dos trainees recebem?
+
+# Estimativa do percentil 80:
+# Usamos a mesma função quantile(), mas agora pedimos apenas o percentil 80 (0.80)
+percentil_80 <- quantile(salarios, probs = 0.80)
+
+# Exibindo o resultado
+paste("O salário máximo que 80% dos trainees recebem é de: R$", round(percentil_80, 2))
+```
+
+
+3. Como essas informações podem auxiliar o setor de RH?
+
+Em resumo, os quartis e percentis fornecem uma imagem clara da distribuição e dispersão dos salários, permitindo ao RH tomar decisões mais estratégicas, justas e baseadas em dados em vez de apenas "achismos". É fundamental para a gestão de talentos e a saúde financeira da empresa!
+
+
+
+## Tópico: Correlação e Diversificação de Carteiras
+
+### Exercício 5
+
+1. Use `tq_get()` para baixar as séries de preços das ações da Vale 
+(VALE3) e do Bradesco (BBDC4) desde `2024-01-01`
+
+```{r}
+# 1. Use tq_get() para baixar as séries de preços das ações
+# Os tickers para o Yahoo Finance geralmente precisam do '.SA' para ações brasileiras.
+acoes <- c("VALE3.SA", "BBDC4.SA")
+data_inicio <- "2024-01-01"
+
+# Baixando os dados
+# 'get = "stock.prices"' indica que queremos os preços das ações
+# 'from' e 'to' definem o período
+dados_acoes_brutos <- tq_get(acoes, get = "stock.prices", from = data_inicio)
+
+# Dando uma olhada nos primeiros dados pra ver se veio certo (sempre bom!)
+print("Dados brutos das ações:")
+print(head(dados_acoes_brutos))
+```
+
+2. Organize os dados com `pivot_wider()`.
+
+```{r}
+# 2. Organize os dados com pivot_wider().
+
+# Precisamos das colunas 'date', 'symbol' e 'adjusted' (preço de fechamento ajustado)
+# O select() é só pra ter certeza que a gente pega só o que precisa antes de "espalhar".
+dados_organizados <- dados_acoes_brutos %>%
+  select(date, symbol, adjusted) %>%
+  pivot_wider(names_from = symbol, values_from = adjusted)
+
+# Verificando como ficou a organização (agora cada ação tem sua coluna de preço!)
+print("Dados organizados com pivot_wider():")
+print(head(dados_organizados))
+```
+
+3. Calcule a **correlação de Pearson** entre os preços e 
+interprete sua magnitude usando os critérios propostos 
+por Cohen (1988).
+
+Estimativa do coeficiente de correlação de Pearson:
+
+```{r}
+# 3. Calcule a correlação de Pearson entre os preços
+
+# A gente vai pegar as colunas de preços da Vale e do Bradesco.
+# Lembre-se que o nome das colunas são os tickers que baixamos: VALE3.SA e BBDC4.SA
+# Usamos `$` para selecionar colunas específicas de um data frame.
+correlacao_precos <- cor(dados_organizados$`VALE3.SA`, dados_organizados$`BBDC4.SA`, use = "complete.obs")
+
+# O 'use = "complete.obs"' é importante pra ignorar linhas onde falta algum dado,
+# evitando erros no cálculo da correlação.
+
+paste("O coeficiente de correlação de Pearson entre VALE3.SA e BBDC4.SA é:", round(correlacao_precos, 4))
+```
+
+Interpretação da magnitude usando a função interpret_r do pacote 
+effectsize:
+
+```{r}
+# Usando a função interpret_r para interpretar a magnitude da correlação
+# Ela já sabe os critérios do Cohen!
+interpretacao_correlacao <- interpret_r(correlacao_precos, rules = "cohen1988")
+
+print("Interpretação da magnitude da correlação (Critérios de Cohen 1988):")
+print(interpretacao_correlacao)
+```
+
+**Interpretação:(ESCREVA AQUI SUA RESPOSTA)**
+O coeficiente de correlação de Pearson entre os preços da VALE3 e BBDC4 é de aproximadamente [VALOR_CALCULADO_DA_CORRELACAO]. De acordo com os critérios de Cohen (1988), essa magnitude é considerada [RESULTADO_DA_INTERPRETACAO_COHEN]. Isso significa que, [EXPLIQUE_SE_ELAS_SE_MOVEM_NA_MESMA_DIRECAO_E_COM_QUE_FORCA]. Por exemplo, se a correlação for positiva e forte, significa que quando o preço de uma sobe, o da outra tende a subir também, e com uma força considerável.
+
+
+
+4. Crie um gráfico de dispersão com reta de regressão para as 
+séries de preços e interprete do gráfico considerando o coeficiente de 
+correlação de Pearson estimado
+
+```{r}
+# 4. Crie um gráfico de dispersão com reta de regressão
+
+# É importante lidar com possíveis NA's antes de plotar,
+# especialmente se alguma data não tiver preço para uma das ações.
+# A gente vai remover as linhas que têm NA nessas colunas antes de plotar.
+dados_para_plot <- dados_organizados %>%
+  drop_na(`VALE3.SA`, `BBDC4.SA`) # Remove linhas com NA nas colunas das ações
+
+# Criando o gráfico de dispersão com ggplot2
+# geom_point() para os pontos de dispersão
+# geom_smooth(method = "lm", se = FALSE) para a reta de regressão linear sem o intervalo de confiança
+grafico_dispersao <- ggplot(dados_para_plot, aes(x = `VALE3.SA`, y = `BBDC4.SA`)) +
+  geom_point(alpha = 0.6, color = "darkblue") + # Pontos mais transparentes e azuis
+  geom_smooth(method = "lm", se = FALSE, color = "red") + # Reta de regressão em vermelho, sem sombreamento
+  labs(title = "Dispersão dos Preços de VALE3 e BBDC4",
+       x = "Preço de Fechamento Ajustado VALE3",
+       y = "Preço de Fechamento Ajustado BBDC4") +
+  theme_minimal() # Um tema mais limpo para o gráfico
+
+# Exibindo o gráfico
+print(grafico_dispersao)
+```
+
+
+**Interpretação:(ESCREVA AQUI SUA RESPOSTA)**
+Minha interpretação de aluno (pra detonar na prova):
+O gráfico de dispersão mostra a relação entre os preços diários de VALE3 e BBDC4.
+
+Se os pontos formarem uma nuvem que sobe da esquerda para a direita, isso visualmente confirma uma correlação positiva. Quanto mais "apertada" a nuvem de pontos estiver em torno da linha de regressão (e quanto mais a linha for inclinada), mais forte é a correlação.
+Se a linha de regressão tiver uma inclinação positiva [SE_FOR_O_CASO], isso reforça o coeficiente de correlação [VALOR_DA_CORRELACAO] que calculamos, indicando que, em geral, quando o preço de uma ação sobe, o da outra tende a subir também.
+A dispersão dos pontos em relação à linha indica a força dessa relação. Se os pontos estiverem muito espalhados, mesmo com uma linha clara, a correlação pode não ser tão forte. Se estiverem bem juntos da linha, a correlação é mais forte.
+
+
+5. Avalie se uma carteira formada por essas duas ações poderia ser 
+considerada bem diversificada, com base na correlação estimada e 
+na análise do gráfico de dispersão.
+
+**Interpretação: (ESCREVA AQUI SUA RESPOSTA)**
+Para uma carteira ser considerada bem diversificada, idealmente, as ações devem ter uma correlação baixa ou negativa.
+
+Correlação Positiva (como provavelmente a que você encontrou): Se a correlação entre VALE3 e BBDC4 for positiva e [SUA_INTERPRETACAO_COHEN] (ex: moderada a forte), isso significa que essas duas ações tendem a se mover na mesma direção. Quando uma sobe, a outra tende a subir; quando uma cai, a outra tende a cair.
+Implicação para a Diversificação: Ter duas ações que se movem na mesma direção NÃO contribui significativamente para a diversificação do risco. O objetivo da diversificação é reduzir o risco total da carteira. Se ambas as ações caem juntas em um cenário de mercado adverso, o investidor ainda estará exposto a uma grande perda.
+Conclusão: Baseando-me na correlação [VALOR_DA_CORRELACAO] (que Cohen classifica como [INTERPRETACAO_COHEN]) e no gráfico de dispersão que mostra uma tendência [POSITIVA/NEGATIVA], uma carteira composta apenas por VALE3 e BBDC4 provavelmente NÃO seria considerada bem diversificada. Para uma diversificação eficaz, seria mais interessante buscar ativos com correlação baixa ou, idealmente, negativa, ou de setores e perfis de risco bem diferentes, para que quando um ativo não estiver performando bem, o outro possa compensar.
