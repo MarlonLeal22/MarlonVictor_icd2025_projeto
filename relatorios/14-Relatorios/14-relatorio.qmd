@@ -442,9 +442,13 @@ dados_recentes <- pnud_muni %>%
 glimpse(dados_recentes)
 ```
 
+Extraindo uma amostra aleatoria simples com a função slice_sample dplyr:
+```{r} 
+#
+set.seed(234)
 
 
-
+```
 
 ## Amostragem Estratificada com o pacote `sampling`
 
