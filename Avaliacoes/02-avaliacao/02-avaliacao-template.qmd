@@ -1,0 +1,379 @@
+---
+title: "Avaliação 2 - Valor: 33 pontos"
+subtitle: "Introdução à Ciência de Dados - 2025 <br> Bacharelado em Administração"
+author:   
+  - Johnny Tobias   
+  - Kelry Fernanda
+  - Marlon Victor
+  - Paula Mota
+title-block-banner: "#27445C"
+format:
+  html:
+    embed-resources: true
+    page-layout: article
+    toc: true
+    toc-location: left
+lang: "pt"
+date: 2025-06-18
+date-format: long
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+
+```{r}
+#| label: setup
+#| echo: false
+
+# pacotes utilizados
+library(here)
+library(tidyverse)
+library(tidyquant)
+library(effectsize)
+```
+
+
+
+## Questão 1
+
+**a)**
+
+```{r}
+# Parâmetros fornecidos
+probabilidade_sinistro <- 0.01  # 1% de probabilidade de sinistro
+indenizacao_media <- 150000    # R$ 150.000 de indenização média por sinistro
+
+# Cálculo do prêmio (valor esperado da indenização por residência)
+premio_puro <- probabilidade_sinistro * indenizacao_media
+premio_puro
+```
+
+
+**b)**
+
+```{r}
+# Margem-alvo sobre o prêmio puro
+margem_alvo <- 0.25 # 25%
+
+# Cálculo do prêmio comercial
+premio_comercial <- premio_puro * (1 + margem_alvo)
+premio_comercial
+```
+
+
+**c)** 
+
+Simulação dos custos médios com 10 residências seguradas:
+
+```{r}
+## fixa a semente para reprodutibilidade
+set.seed(2025)
+
+## simula o custo para 10 residências seguradas
+custos_10 <- sample(
+  c(0, 150000),        # preencha com os dois valores de custos possíveis: sem sinistro e com sinistro
+  size = 10,          # número total de residências a serem simuladas
+  replace = TRUE,       # indique se a amostragem será com reposição
+  prob = c(0.99, 0.01)  # probabilidades de cada um dos dois resultados (sinistro e não sinistro)
+  ) 
+
+## estimativa do custo médio por apólice com 10 residências seguradas
+mean(custos_10)         # função para calcular a média do vetor simulado
+```
+
+
+Simulação dos custos médios com 100 residências seguradas:
+
+```{r}
+## fixa a semente para reprodutibilidade
+set.seed(2025)
+
+## simula o custo para 100 residências seguradas
+custos_100 <- sample(
+  c(0, 150000),        # preencha com os dois valores de custos possíveis: sem sinistro e com sinistro
+  size = 100,          # número total de residências a serem simuladas
+  replace = TRUE,       # indique se a amostragem será com reposição
+  prob = c(0.99, 0.01)  # probabilidades de cada um dos dois resultados (sinistro e não sinistro)
+  ) 
+
+## estimativa do custo médio por apólice com 10 residências seguradas
+mean(custos_100)         # função para calcular a média do vetor simulado
+```
+
+
+Simulação dos custos médios com 1000 residências seguradas:
+
+```{r}
+## fixa a semente para reprodutibilidade
+set.seed(2025)
+
+## simula o custo para 1000 residências seguradas
+custos_1000 <- sample(
+  c(0, 150000),        # preencha com os dois valores de custos possíveis: sem sinistro e com sinistro
+  size = 1000,          # número total de residências a serem simuladas
+  replace = TRUE,       # indique se a amostragem será com reposição
+  prob = c(0.99, 0.01)  # probabilidades de cada um dos dois resultados (sinistro e não sinistro)
+  ) 
+
+## estimativa do custo médio por apólice com 10 residências seguradas
+mean(custos_1000)         # função para calcular a média do vetor simulado
+```
+
+
+**d)**
+
+A lei mostra que quanto mais a média dos custos aproxima do valor esperado, maior a carteira. E permitindo precificar melhor os prêmios e garantindo estabilidade financeira, reduz as incertezas que pode ocorrer.
+
+
+**e)**
+
+O segurado paga parte do sinistro, o que reduz o custo da seguradora e consequentemente o custo da apólice diminui também. Permitindo assim ter um lucro maior com o mesmo prêmio ou cobrar prêmios menores.
+
+
+
+## Questão 2
+
+**a)** 
+
+```{r}
+# Parâmetros da distribuição normal
+media_entrega <- 6.5
+dp_entrega <- 1.8
+
+# Valor de interesse
+tempo_limite_a <- 8
+# P(Tempo de entrega > 8 dias)
+prob_maior_que_8 <- 1 - pnorm(tempo_limite_a, mean = media_entrega, sd = dp_entrega)
+prob_maior_que_8
+```
+
+
+**b)** 
+
+```{r}
+# b) Quantil correspondente a 90% (prazo máximo para 90% dos casos)
+prazo_90_porcento <- qnorm(0.90, mean = media_entrega, sd = dp_entrega)
+prazo_90_porcento
+```
+
+
+**c)** 
+
+```{r}
+# Valor de interesse
+prazo_prometido <- 7
+
+# c) P(Tempo de entrega <= 7 dias)
+prob_prazo_7_dias_cumprido <- pnorm(prazo_prometido, mean = media_entrega, sd = dp_entrega)
+prob_prazo_7_dias_cumprido
+```
+
+
+
+
+
+## Questão 3
+
+
+**a)** 
+
+```{r}
+vendas_loja =  21800
+media_vendas = 18500
+desvio_padrao_vendas = 2300
+# Cálculo do Score Z
+score_z <- (vendas_loja - media_vendas) / desvio_padrao_vendas
+score_z
+```
+
+Reposta:
+
+
+**b)** 
+
+```{r}
+score_z <- (vendas_loja - media_vendas) / desvio_padrao_vendas
+
+# Cálculo da probabilidade acumulada usando o Score Z
+prob_acumulada <- pnorm(score_z)
+prob_acumulada
+```
+
+
+Reposta:
+
+
+**c)**
+
+Sim. Pois a Probalidade acumulada foi maior que 0.9, então nesse caso ela vendeu mais que 90% da outras lojas ficando assim entre as 10%
+
+**d)** 
+
+
+
+
+
+## Questão 4
+
+**a)**
+
+```{r}
+# Parâmetros do portfólio
+retorno_medio_mensal <- 0.011 # 1.1% em decimal
+volatilidade_mensal <- 0.042  # 4.2% em decimal
+valor_investido <- 400000     # R$ 400.000
+nivel_confianca <- 0.99       # VaR 99%
+# Se o VaR é 99%, procuramos o quantil para os 1% piores cenários (0.01)
+quantil_VaR <- qnorm(1 - nivel_confianca) # Equivalente a qnorm(0.01)
+quantil_VaR
+```
+
+Cálculo do VaR 99% percentual:
+
+```{r}
+# Calcular o VaR Percentual
+# VaR Percentual = média do retorno + (quantil Z * desvio padrão do retorno)
+var_percentual <- retorno_medio_mensal + quantil_VaR * volatilidade_mensal
+var_percentual
+```
+
+Cálculo do VaR 99% monetário (valor absoluto da perda):
+
+```{r}
+# (Certifique-se de que 'valor_investido' e 'var_percentual'
+# estejam definidos no seu ambiente R antes de executar este bloco)
+
+# 3. Calcular o VaR Monetário (valor absoluto da perda)
+var_monetario <- abs(valor_investido * var_percentual)
+var_monetario
+```
+
+
+
+**b)**
+
+O VAR 99% monetário indica que com 99% de confiança, a perda máxima esperada em um mês nesse caso não excederá o valor de 34682,64.
+
+
+**c)**
+
+Podemos observar duas características principais:
+
+-Assimetria: Os retornos financeiros exibem assimetria negativa frequentemente. Isso pode significar que as perdas grandes e raras são mais prováveis do que uma distribuição normal poderia prever. Essa ideia de normalidade tende a minimizar a probabilidade de eventos extremos, que também podem ser chamados de riscos de cauda.
+
+-Curtose: Distribuições com caudas pesadas apresentam retornos reais com curtose positiva, o que significa que resultados extremos, positivos ou negativos, ocorrem com mais frequência do que uma distribuição normal poderia prever. Isso reflete maior concentração de dados nas extremidades e um formato mais agudo no centro, características que o modelo normal não representa bem.
+
+
+
+## Questão 5
+
+- [ ] A 
+
+- [ ] B 
+
+- [ ] C 
+
+- [X] D 
+
+- [ ] E 
+
+
+Por que as demais estão erradas?
+
+- **Letra A** - Errada, pois Santa Lúcia está entre os países com maior taxa de feminicídio, e não entre as mais baixas.
+  
+- **Letra B** - Errada. Além dessa afirmativa ter uma visão machista e onde culpa a vitima, o agressor deve ser responsabilizado e não colocar a culpa na vitima.
+  
+- **Letra C** - Errada, pois Brasil, Argentina e México tem os maiores números de casos totais, mas os países Honduras e El Salvador são os maiores em relação a frequência relativa (por 100mil mulheres)
+  
+- **Letra E** - E- Errada, o Brasil tem taxas proporcionais muito menores do que Honduras.
+
+
+
+
+
+## Questão 6
+
+
+**a)** 
+
+
+```{r}
+# a) Pipeline para baixar, processar e organizar os dados de preços
+dados_precos <- c("PETR4.SA", "WEGE3.SA") %>%
+  tq_get(from = "2024-01-01") %>%
+  select(symbol, date, close) %>%
+  pivot_wider(names_from = symbol, values_from = close) %>%
+  rename(petrobras = `PETR4.SA`, weg = `WEGE3.SA`)
+
+# Exibe as primeiras linhas do resultado
+head(dados_precos)
+```
+
+
+**b.1)** 
+   
+```{r}
+# cálculo dos retornos logarítmicos
+dados_ret <- dados_precos %>% 
+# a função `mutate()` adiciona as colunas de retornos
+mutate(ret_petrobras = log(petrobras / lag(petrobras)),
+     ret_weg       = log(weg       / lag(weg))) %>% 
+# drop_na remove a linha com retorno faltante (NA)
+drop_na()
+
+# exibição das primeiras linhas
+head(dados_ret)
+```
+
+
+
+**b.2)** 
+
+```{r}
+# b.2) Estimar o coeficiente de correlação de Pearson
+correlacao_retornos <- cor(dados_ret$ret_petrobras, dados_ret$ret_weg, use = "complete.obs")
+
+# Exibir o resultado
+correlacao_retornos
+```
+
+
+**b.3)** 
+
+```{r}
+#Interpretar a magnitude do coeficiente de correlação
+interpret_r(correlacao_retornos, rules = "cohen1988")
+```
+
+**Interpretação:**
+
+A correlação entre Petrobas e WEG sugere que ter essas duas ações em uma carteira pode oferecer benefícios de diversificação, o que ajuda a ter menos risco em comparação com investir em apenas uma delas.
+
+**c)** 
+
+```{r}
+# c) Construir o gráfico de dispersão com reta de regressão
+ggplot(dados_ret, aes(x = ret_petrobras, y = ret_weg)) +
+  geom_point(alpha = 0.6) + # Adicionado alpha para melhor visualização de pontos sobrepostos
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(
+    title = "Dispersão dos Retornos Diários: PETR4.SA vs WEGE3.SA",
+    subtitle = paste0("Período: ", min(dados_ret$date), " a ", max(dados_ret$date)),
+    x = "Retorno Logarítmico PETR4.SA",
+    y = "Retorno Logarítmico WEGE3.SA",
+    caption = "Fonte: Yahoo Finance"
+  ) +
+  theme_minimal()
+```
+
+
+**Interpretação:**
+
+Esse gráfico visualiza a a dispersão entre os retornos diários da Petrobras e da WEG, podemos observar uma distribuição bem espalhada dos pontos. A linha de central vermelha tem uma leve inclinação positiva, o que reflete a correlação fraca vista antes pelo coeficiente de pearson. Como os pontos não se agrupam muito próximos da linha, indica que embora exista uma certa relação entre esses retornos das duas empresas, ela é fraca. Essa baixa correlação pode ser legal para quem busca diversificar uma carteira de investimentos.
+
+**d)** 
+
+Quando essa correlação entre as duas ações é baixa, isso quer dizer que os retornos delas não costumam se mover juntas. Um exemplo, se a PETROBRAS tiver um dia ruim com queda nos preços, isso não quer dizer que a WEG também vai cair. Por conta dessa diferença nos movimentos é o que torna possível diversificar a carteira. Ao juntar ativos que não sobem ou descem ao mesmo tempo, as perdas de um podem ser compensadas pelos ganhos do outro, o que ajuda a reduzir os riscos se investir somente em uma.
