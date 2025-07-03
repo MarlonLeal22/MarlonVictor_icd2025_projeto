@@ -36,9 +36,14 @@ Isso inclui:
 ### Avaliação 1
 
 - **Tema:** Fundamentos de R e Manipulação de Dados
-- **Data de entrega:** [Data]
-- **Status:** [Não iniciado / Em andamento / Concluído]
-- **O que aprendi:** [Preencher durante ou após a conclusão]
+- **Data de entrega:** [14/05/2025]
+- **Status:** [Concluído]
+- **O que aprendi:** Este código ensina como importar, limpar e preparar dados de e-commerce em R. Você aprende a renomear colunas, 
+converter tipos de dados e calcular estatísticas descritivas básicas. Além disso, demonstra como agrupar dados para analisar o 
+faturamento por método de pagamento, o comportamento de clientes específicose o impacto de anúncios em vídeo nas conversões. 
+Também explora o comportamento de diferentes tipos de clientes, incluindo taxas de devolução e faturamento médio.
+
+
 
 
 ## Anotações e Dicas Importantes
@@ -46,10 +51,29 @@ Isso inclui:
 [Aqui você pode adicionar lembretes, dicas ou comandos úteis 
 que aprendeu durante as aulas.]
 
-- Anotação ou dica 1
+*Para importar dados, use read_csv() do pacote readr. Certifique-se de que o caminho do arquivo esteja correto 
+(você usou here::here() no seu código, o que é uma boa prática!).
+
+*Use glimpse() do dplyr para ter uma visão geral rápida da estrutura dos seus dados, incluindo os tipos de cada coluna.
+
+*A função rename() é útil para dar nomes mais intuitivos às suas variáveis.
+
+*Esteja atento aos tipos de dados das suas colunas. Use as.factor(), as.numeric(), as.Date(), as.logical() conforme necessário para garantir que as análises sejam feitas corretamente.
+
+*As funções select(), filter(), mutate(), group_by(), summarize() e arrange() do dplyr são ferramentas poderosas para manipular e analisar seus dados. Pratique o uso delas!
+
+*O sistema de publicação Quarto permite criar relatórios dinâmicos e reproduzíveis combinando código (R, Python, etc.), texto e visualizações. Explore as diferentes opções de formatação que ele oferece.
+
+*Utilize o Git e o GitHub para controlar as versões do seu projeto e colaborar com outras pessoas. Pratique os comandos básicos como git add, git commit e git push.
+
+- Anotação ou dica 1:
+Lembre-se dos seis passos da metodologia CRISP-DM: Entendimento do Negócio, 
+Entendimento dos Dados, Preparação dos Dados, Modelagem, Avaliação e Implantação. 
+Essa estrutura ajuda a organizar qualquer projeto de ciência de dados.
 
 - Anotação ou dica 2
-
+O operador pipe (%>%) do pacote dplyr torna o código mais legível ao encadear uma sequência de operações de manipulação de dados. 
+Use-o sempre que possível para melhorar o fluxo do seu código.
 
 
 # Glossário de Termos
@@ -324,3 +348,67 @@ estão sendo editados ativamente.
 de dados legível por humanos usada para os metadados de documentos 
 Quarto, caracterizada pelo formato de pares chave-valor e indentação 
 significativa.
+
+**Data Manipulation and Analysis (R):**
+
+*Data Frame:* A estrutura de dados fundamental em R para armazenar tabelas.
+
+*Variável:* Uma característica ou atributo dos dados (coluna em um data frame).
+
+*Observação:* Uma unidade de dados (linha em um data frame).
+
+*Função:* Um bloco de código reutilizável que realiza uma tarefa específica.
+
+*Argumento:* Valores passados para uma função para controlar seu comportamento.
+
+*Tipo de Dados:* A classificação dos valores armazenados em uma variável (e.g., numérico, caractere, lógico, fator).
+
+*Fator:* Um tipo de dado em R usado para representar variáveis categóricas com níveis.
+
+*tidyverse:* Um conjunto de pacotes R, incluindo dplyr e readr, que compartilham uma filosofia de design consistente para manipulação e visualização de dados.
+
+*readr:* Pacote do tidyverse usado para importar dados (como arquivos CSV).
+
+*ggplot2:* Um pacote do tidyverse para criar gráficos e visualizações de dados.
+
+*Visualização de Dados:* A representação gráfica de dados para identificar padrões e insights.
+
+**Statistics and Probability:**
+
+*População: O conjunto completo de itens ou indivíduos sobre os quais se deseja obter informações.
+
+*Amostra: Um subconjunto da população usado para inferir informações sobre a população inteira.
+
+*Média: Uma medida de tendência central (o valor médio).
+
+*Mediana: Outra medida de tendência central (o valor do meio quando os dados são ordenados).
+
+*Moda: O valor que ocorre com maior frequência em um conjunto de dados.
+
+*Desvio Padrão: Uma medida da dispersão dos dados em torno da média.
+
+*Variância: O quadrado do desvio padrão, também uma medida de dispersão.
+
+*Distribuição de Probabilidade: Uma função que descreve a probabilidade de diferentes resultados possíveis em um experimento aleatório.
+
+*Inferência Estatística: O processo de usar dados de uma amostra para tirar conclusões sobre uma população maior.
+
+*Hipótese Nula: Uma afirmação inicial que se tenta refutar através da análise de dados.
+
+*Hipótese Alternativa: A afirmação que se espera encontrar evidências para apoiar.
+
+*Valor-p (p-value): A probabilidade de obter resultados tão extremos (ou mais extremos) quanto os observados, assumindo que a hipótese nula seja verdadeira.
+
+**General Data Science Concepts:**
+
+*Dados Brutos: Dados em seu formato original, antes de serem processados ou limpos.
+
+*Limpeza de Dados: O processo de identificar e corrigir erros, inconsistências e imprecisões nos dados.
+
+*Preparação de Dados: O processo de transformar e organizar os dados para análise.
+
+*Análise Exploratória de Dados (EDA): O processo de explorar e resumir os dados para entender seus principais padrões e características.
+
+**Outros:**
+
+*API (Interface de Programação de Aplicações): Um conjunto de regras e protocolos que permite que diferentes softwares se comuniquem entre si.

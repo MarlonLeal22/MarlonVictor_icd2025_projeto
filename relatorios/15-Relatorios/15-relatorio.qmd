@@ -1,0 +1,470 @@
+---
+title: "Introdução à Ciência de Dados"
+subtitle: "Introdução à Inferência Estatística- Parte 2"
+lang: pt-BR
+author: "Marlon Victor"
+date: 2025-07-02
+format: 
+  html:
+    theme: flatly
+    embed-resources: true
+    toc: true
+    number-sections: true
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+
+```{r}
+#| label: setup
+#| echo: false
+
+# configura exibição de números
+options(digits = 5, scipen = 999)
+
+# carrega os pacotes necessários
+library(tidyverse)  # Inclui dplyr, tidyr, ggplot2...
+library(ggpubr)     # Para gráfico quantil-quantil
+```
+
+
+# Estimação por Intervalo de Confiança
+
+## Por que Intervalos de Confiança?
+
+O Desafio do Analista de Dados:
+
+**Problema**: Uma estimativa pontual informa um valor, mas não quantifica a incerteza associada à inferência de uma amostra para a população.
+
+**Exemplo**: Satisfação média de 7.2 pontos em amostra de 100 clientes.
+
+**Pergunta**: Qual nossa confiança nesta estimativa?
+
+**Solução**: Intervalos de confiança não reduzem a incerteza, mas 
+a expressam de forma probabilisticamente controlada.
+
+**Comunicação Correta**: 
+
+> "A satisfação média de todos os clientes está entre 6.8 e 7.6 pontos, 
+com 95% de confiança."
+
+Quantifica a incerteza da amostragem.
+
+
+
+
+# Intervalos para Proporções
+
+## Aplicações para Proporções
+
+Situações Práticas:
+
+**Marketing**: Taxa de conversão, proporção de clientes satisfeitos, 
+percentual de recomendação.
+
+**Qualidade**: Taxa de defeitos, proporção de entregas no prazo, percentual 
+de conformidade.
+
+**Recursos Humanos**: Taxa de rotatividade, percentual de funcionários 
+engajados.
+
+**Pesquisa de Mercado**: Intenção de compra, preferência entre marcas, 
+aceitação de produtos.
+
+**Pesquisas Eleitorais**: Intenção de voto, aprovação de candidatos ou 
+governos.
+
+
+
+
+
+
+## Exemplo 1: Intervalo de Confiança para 1 Proporção
+
+### Pesquisa Eleitoral
+
+**Cenário**: Instituto de pesquisa realiza levantamento sobre intenção 
+de voto para prefeito em cidade de 500.000 habitantes.
+
+**Amostra**: 1.200 eleitores selecionados aleatoriamente
+**Resultado**: 456 eleitores declararam intenção de votar no Candidato A
+
+**Objetivo**: Estimar a proporção populacional de intenção de voto 
+com intervalo de confiança.
+
+
+
+Exemplo 1 em R
+
+```{r}
+# dados da pesquisa eleitoral
+n_eleitores <- 1200
+votos_candidato_a <- 456
+
+# estimativa pontual da proporção populacional
+# ou simplemente proporção amostral
+prop_amostral <- votos_candidato_a / n_eleitores
+prop_amostral
+```
+
+
+Estimativa por Intervalo de confiança (95%) da proporção populacional:
+
+```{r}
+estimativa_ic_proporcao <- prop.test(x = votos_candidato_a, 
+                                 n = n_eleitores, 
+                                 conf.level = 0.95)
+
+# exibe o resultado
+estimativa_ic_proporcao
+```
+
+
+Extrai somente a estimativa do intervalo de confiança
+
+```{r}
+estimativa_ic_proporcao$conf.int
+```
+
+
+
+
+## Exemplo 2: Intervalo de Confiança para Diferença entre 2 Proporções
+
+### Análise de Taxa de Conversão
+
+Uma empresa de e-commerce testou duas estratégias de campanha 
+publicitária digital. O analista de dados precisa comparar as taxas 
+de conversão para determinar se existe diferença significativa 
+entre as estratégias.
+
+**Dados Coletados:**
+
+| Campanha | Visualizações | Conversões | Taxa Observada |
+|----------|---------------|------------|----------------|
+| A (Tradicional) | 2.500 | 175 | 7.0% |
+| B (Personalizada) | 2.200 | 198 | 9.0% |
+
+**Objetivo da Análise:**
+
+Construir um intervalo de 95% de confiança para a diferença entre 
+as taxas de conversão e avaliar se há evidência estatística de 
+diferença entre as campanhas.
+
+
+Exemplo 2 em R
+
+```{r}
+# Dados das campanhas
+# Campanha A (Tradicional)
+n_a <- 2500
+x_a <- 175
+
+# Campanha B (Personalizada)  
+n_b <- 2200
+x_b <- 198
+
+# Calcula proporções amostrais
+prop_a <- x_a / n_a
+prop_b <- x_b / n_b
+
+# Exibe as proporções amostrais
+prop_a
+prop_b
+```
+
+
+Diferença observada (B - A)
+
+```{r}
+diferenca_observada <- prop_b - prop_a
+diferenca_observada
+```
+
+
+Comparar as duas proporções: A função calcula (primeira - segunda), 
+então usamos ordem (B, A) para obter (B - A)
+
+```{r}
+resultado <- prop.test(x = c(x_b, x_a), n = c(n_b, n_a), conf.level = 0.95)
+
+# Exibir resultado completo
+resultado
+```
+
+
+```{r}
+# Extrair intervalo de confiança
+ic_a_menos_b <- resultado$conf.int
+ic_a_menos_b
+```
+
+
+- **Interpretação:**
+
+A diferença observada entre as taxas de conversão foi de 2.0 pontos 
+percentuais a favor da Campanha B (9.0% versus 7.0%). 
+
+O intervalo de 95% de confiança para a verdadeira diferença indica 
+que, com 95% de confiança, a diferença populacional está entre 
+aproximadamente 0.4 e 3.6 pontos percentuais.
+
+Como o intervalo de confiança não contém zero e todos os valores 
+são positivos, existe evidência estatística de que a Campanha B 
+possui taxa de conversão superior à Campanha A.
+
+
+
+
+
+
+
+
+# Intervalos para Médias 
+
+## Aplicações para Médias
+
+Variáveis Numéricas em Administração:
+
+- **Análise Financeira**: Receita média por cliente, valor médio de transações, 
+ROI médio (*com cautela* em caso de assimetrias).
+
+- **Operações**: Tempo médio de produção, custo médio unitário, 
+produção média por hora.
+
+- **Marketing**: Valor médio de pedidos (ticket médio), tempo médio 
+de conversão, número médio de cliques por campanha.
+
+- **Recursos Humanos**: Salário médio por departamento, tempo médio 
+de permanência (retenção).
+
+- **Atendimento ao Cliente**: Tempo médio de resposta, pontuação média 
+de satisfação (*em escalas tipo Likert*).
+
+
+
+
+## Exemplo 1 - Intervalo de Confiança para 1 Média
+
+### Tempo de Resposta de Suporte
+
+**Situação**: Avaliar o tempo médio de resolução de tickets de suporte técnico.
+
+```{r}
+tempos <- c(2.1, 3.4, 1.8, 4.2, 2.9, 3.1, 2.7, 1.9, 3.8, 2.5,
+            4.1, 2.3, 3.6, 2.8, 1.7, 3.9, 2.4, 3.2, 2.6, 4.0,
+            1.6, 3.5, 2.2, 3.7, 2.0)
+
+# cria um data frame com os tempos
+dados_tempo <- data.frame(tempo = tempos)
+
+# exibe a data frame
+dados_tempo
+```
+
+
+Gráfico quantil-quantil (QQ) para verificar a normalidade dos 
+tempos de resposta:
+
+```{r}
+ggqqplot(dados_tempo, x = "tempo") +
+  labs(title = "Verificação de Normalidade - Tempos de Resposta",
+       x = "Quantis Teóricos (Normal Padrão)",
+       y = "Tempos Observados (horas)")
+```
+
+
+O gráfico QQ mostra que os dados estão razoavelmente próximos de uma 
+distribuição normal, com dois pontos no limiar da banda cinza, mas sem 
+grandes desvios.
+
+```{r}
+# média amostral
+mean(tempos)
+```
+
+```{r}
+# intervalo de confiança
+resultado_tempo <- t.test(tempos)
+resultado_tempo$conf.int
+```
+
+**Resultado**: IC 95% = [2.5, 3.2] horas
+
+**Conclusão**: Com 95% de confiança, o tempo médio de 
+resolução está entre **2.5 e 3.2 horas**.
+
+
+
+
+## Exemplo 2: Teste A/B - IC para Diferença entre 2 Médias
+
+#### Teste de Duas Versões de Website
+
+**Cenário**: Comparar tempo médio de permanência entre 
+versão atual (A) e redesenhada (B).
+
+```{r}
+versao_a <- c(3.2, 4.1, 2.8, 3.9, 3.5, 4.3, 2.9, 3.7, 4.0, 3.3,
+              2.6, 3.8, 4.2, 3.1, 3.6, 2.7, 4.5, 3.4, 2.5, 3.9)
+
+versao_b <- c(4.8, 5.2, 4.3, 5.6, 4.7, 5.1, 4.9, 5.4, 4.5, 5.0,
+              4.6, 5.3, 4.4, 5.7, 4.8, 5.5, 4.2, 5.8, 4.7, 5.2)
+
+dados_ab <- data.frame(
+  tempo = c(versao_a, versao_b),
+  grupo = c(rep("A", 20), rep("B", 20))
+)
+
+# exibe a data frame
+dados_ab
+```
+
+
+```{r}
+ggqqplot(dados_ab, x = "tempo", color = "grupo") +
+  labs(title = "Verificação de Normalidade por Grupo")
+```
+
+0 gráfico quantil-quantil (QQ) mostra que ambos os grupos 
+estão razoavelmente próximos de uma distribuição normal.
+
+
+```{r}
+# intervalo de confiança para diferença de médias
+resultado_ab <- t.test(versao_b, versao_a, conf.level = 0.95)
+resultado_ab$conf.int
+```
+
+**Resultado**: IC 95% para (B - A) = [1.14, 1.83] minutos
+
+**Conclusão**: Com 95% de confiança, a nova versão aumenta o tempo médio de permanência entre **1.14 e 1.83 minutos**.
+
+**Decisão**: Implementar Versão B em produção.
+
+
+
+
+
+## Exercício 1: Teste A/B 
+
+Uma empresa de varejo online conduziu um teste A/B para avaliar duas 
+versões de e-mail promocional. O analista de dados precisa determinar 
+se existe diferença significativa entre as taxas de cliques das 
+duas versões.
+
+**Dados Coletados:**
+
+Durante uma semana, a empresa enviou aleatoriamente duas versões 
+de e-mail promocional para sua base de clientes:
+
+- Versão A (linha de assunto tradicional): 8.500 e-mails enviados, 
+612 cliques registrados
+
+- Versão B (linha de assunto personalizada): 8.200 e-mails enviados, 
+697 cliques registrados
+
+**Questões para Análise:**
+
+1. Estime as taxas de cliques amostrais para cada versão e a 
+diferença observada.
+
+```{r}
+versaoA_EMAILS = 8500
+versaoA_cliques = 612
+
+versaoB_emails = 8200
+versaoB_cliques = 697
+
+# Calcular proporções amostrais
+prop_a <- versaoA_cliques / versaoA_EMAILS
+prop_b <- versaoB_cliques / versaoB_emails
+
+# Exibir proporções
+prop_a
+prop_b
+```
+
+
+2. Obtenha uma estimativa de um intervalo de 95% de confiança para 
+a diferença entre as taxas de cliques (B - A).
+
+```{r}
+# Diferença observada (B - A)
+diferenca_observada <- prop_a - prop_b
+diferenca_observada
+```
+
+
+3. Interprete os resultados e faça uma recomendação.
+
+Podemos perceber que houve uma diferença de 1.3 pontos percentuais a favor da versao A. 
+Recomendação da versao A pois ela é 2.12 pontos percentuais superior a versão B.
+
+
+
+## Exercício 2: Tempo de Atendimento 
+
+O departamento de atendimento ao cliente de uma empresa de 
+telecomunicações implementou um novo sistema de triagem automatizada. 
+O gerente de operações deseja comparar o tempo médio de resolução de 
+chamadas entre o método tradicional e o novo sistema automatizado.
+
+**Dados Experimentais:**
+
+Durante um mês, foram coletados aleatoriamente tempos de resolução 
+(em minutos) de chamadas atendidas pelos dois métodos:
+
+```{r}
+# Dados já organizados para facilitar a análise
+tradicional <- c(12, 15, 18, 14, 22, 16, 13, 19, 17, 21, 14, 16, 20, 
+                 18, 15, 23, 17, 14, 19, 16, 18, 15, 20, 17, 16)
+
+automatizado <- c(10, 12, 14, 11, 16, 13, 9, 15, 12, 18, 11, 14, 13, 
+                  10, 17, 12, 15, 11, 13, 16, 14, 12, 15, 13, 11, 17, 14, 12)
+
+# Cria a data frame para armazenamento dos dados
+dados_atendimento <- data.frame(
+  tempo = c(tradicional, automatizado),
+  metodo = c(rep("Tradicional", length(tradicional)), 
+             rep("Automatizado", length(automatizado)))
+)
+```
+
+**Tarefas:**
+
+1. Verifique a normalidade dos dados usando gráficos quantil-quantil
+
+```{r}
+# seu código aqui
+```
+
+2. Estime os tempos médios amostrais de resolução para cada método e a
+ diferença observada entre eles.
+ 
+```{r}
+# seu código aqui
+```
+
+3. Obtenha uma estimativa de um intervalo de 95% de confiança para a 
+diferença entre os tempos médios
+
+```{r}
+# seu código aqui
+```
+
+4. Interprete os resultados e faça uma recomendação.
+
+
+
+
+
+
+
+
+
+
+
+
