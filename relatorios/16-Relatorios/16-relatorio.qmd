@@ -1,0 +1,320 @@
+---
+title: "Introdução à Ciência de Dados"
+subtitle: "Introdução à Inferência Estatística- Parte 3"
+lang: pt-BR
+author: "Marlon Victor"
+date: 2025-07-04
+format: 
+  html:
+    theme: flatly
+    embed-resources: true
+    toc: true
+    number-sections: true
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+
+```{r}
+#| label: setup
+#| echo: false
+
+# configura exibição de números
+options(digits = 5, scipen = 999)
+
+# carrega os pacotes necessários
+library(tidyverse)  # Inclui dplyr, tidyr, ggplot2...
+library(pwr)        # para cálculos de tamanho de amostra, poder de teste...
+```
+
+
+
+# Testes Estatísticos de Hipóteses
+
+
+## Solução do Exemplo Fictício
+
+### Há Evidência de discriminação?
+
+- O teste de significância, nesse caso, é formulado como:
+
+$$
+\begin{cases}
+H_0: p = 0.40 \\
+H_A: p > 0.40
+\end{cases}
+$$
+
+```{r}
+n <- 10     # número total de funcionários selecionados
+x <- 9      # número de homens selecionados
+p0 <- 0.40  # proporção sob a hipótese nula
+
+# Teste de proporção
+prop.test(x, n, p = p0, alternative = "greater")
+```
+
+O resultado do teste fornece evidências de que a hipótese nula 
+deve ser rejeitada com um nível de significância de 5%. 
+
+Os dados fornecem evidências de que a alegação da empresa 
+de que não há discriminação contra as mulheres na seleção de funcionários 
+para a participação em programas de treinamento em gestão não 
+é suportada pelos dados da amostra (valor-p = 0,002)
+
+
+
+
+
+## Exercício 2
+
+### Eficácia de Campanha de E-mail
+
+Uma equipe de marketing deseja avaliar se a nova linha de assunto 
+personalizada realmente **aumenta significativamente** a taxa de 
+cliques em comparação com a linha tradicional.
+
+**Dados do Teste A/B:**
+
+- **Versão A** (linha tradicional):  
+  - E-mails enviados: 8.500  
+  - Cliques: 612  
+
+- **Versão B** (linha personalizada):  
+  - E-mails enviados: 8.200  
+  - Cliques: 697  
+
+**Questões para Análise:**
+
+1. Formule as hipóteses nula e alternativa.
+
+2. Realize o teste com a função `prop.test()` usando 
+   `alternative = "greater"`.
+
+3. Apresente o valor-p e conclua com base em um nível de significância de 5%.
+
+4. Interprete os resultados e recomende uma ação.
+
+
+
+
+## Solução do Exercício 2
+
+Hipóteses:
+
+- $H_0: p_B \leq p_A$  
+- $H_1: p_B > p_A$
+
+
+Código R":
+
+```{r}
+cliques <- c(697, 612)     # B, A
+envios  <- c(8200, 8500)   # B, A
+
+prop.test(x = cliques, n = envios, 
+          alternative = "greater", 
+          correct = FALSE)
+```
+
+Resultado:
+
+- Taxa de cliques (A): $\hat{p}_A = \frac{612}{8500} \approx 7{,}2\%$
+
+- Taxa de cliques (B): $\hat{p}_B = \frac{697}{8200} \approx 8,5\%$
+
+- Valor-p = 0.00089
+
+Conclusão
+
+- Como valor-p < 0,05, rejeitamos a hipótese nula ($H_0$).
+
+- Os dados fornecem evidências de que a versão B tem taxa de cliques **significativamente maior** que a versão A.
+
+- **Recomendação**: adotar a versão B da linha de assunto.
+
+
+
+
+## Um Experimento Simples
+
+- Quantas vezes devemos lançar a moeda para ter um alto poder 
+(probabilidade), digamos 0,80 (80%), de rejeitar corretamente 
+$H_0: p = 0.50$ se a moeda for realmente viesada para exibir 
+cara 75% das vezes?
+
+Podemos determinar isso usando a função `pwr.p.test` do pacote `pwr`:
+
+```{r}
+# Determinar o tamanho de amostra necessário
+pwr.p.test(h = ES.h(p1 = 0.75, p2 = 0.50), # h de Cohen
+           sig.level = 0.05,
+           power = 0.80,
+           alternative = "greater")
+```
+
+Portanto, seria necessário lançar a moeda pelo menos 23 vezes (tamanhos de 
+amostra são sempre arredondados para o número inteiro superior mais próximo) 
+para ter 80% de poder do teste, ou seja, de probabilidade de rejeitar 
+corretamente a hipótese nula no nível de significância de 0,05 (5%).
+
+Neste exemplo da proporção de caras, essa é a diferença entre 75% e 50%. 
+Poderíamos dizer que o efeito foi de 25%, mas lembre-se de que tivemos que transformar a diferença absoluta das proporções para outra quantidade usando 
+a função `ES.h`. 
+
+Essa é uma parte crítica do uso correto do pacote `pwr`: você deve 
+fornecer um tamanho de efeito na escala esperada.
+
+Em caso de dúvida, podemos usar tamanhos de efeito convencionais. Esses 
+são tamanhos de efeito pré-determinados para efeitos 
+
+- "pequenos" (*small*); 
+- "médios ou moderados" (*medium*), e;
+- "grandes" (*large*)" 
+
+A função `cohen.ES` retorna um tamanho de efeito convencional para 
+um dado teste. Por exemplo, o tamanho de efeito médio 
+para o teste de proporção é 0,5:
+
+```{r}
+cohen.ES(test="p", size="medium")
+```
+
+
+
+## Poder e Determinação do Tamanho de Amostra
+
+E se assumirmos que o efeito do viés é menor? Isto é, a moeda exibe cara 
+65% das vezes. Quantos lançamentos precisamos fazer para detectar esse 
+efeito menor sendo $\alpha = 0,05$, com 80% de poder e a alternativa mais 
+conservadora `two.sided`?
+
+$$
+\begin{cases}
+H_0: p = 0.50 \\
+H_A: p \neq 0.50
+\end{cases}
+$$
+
+```{r}
+pwr.p.test(h = ES.h(p1 = 0.65, p2 = 0.50),
+           sig.level = 0.05,
+           power = 0.80)
+```
+
+
+
+## Poder do Teste
+
+### Exemplo da Rede de Supermercados
+
+-  $n$ para Detectar Efeito Pequeno
+
+```{r}
+pwr.p.test(h = 0.2, 
+           power = 0.80,
+           sig.level = 0.05, 
+           alternative = "greater")
+```
+
+- $n$ para Detectar Efeito Médio/Moderado
+
+```{r}
+pwr.p.test(h = 0.5, 
+           power = 0.80,
+           sig.level = 0.05, 
+           alternative = "greater")
+```
+
+- $n$ para Detectar Efeito Grande
+
+```{r}
+pwr.p.test(h = 0.8, 
+           power = 0.80,
+           sig.level = 0.05, 
+           alternative = "greater")
+```
+
+
+
+
+# Exercício: Teste Estatísticos de Hipóteses
+
+## Como Escrever Hipóteses com LaTeX? 
+
+Em alguns exercícios, você precisará escrever as 
+hipóteses nula ($H_0$) e alternativa ($H_A$).
+
+Você pode fazer isso facilmente com **LaTeX**, a melhor linguagem para 
+escrever matemática, na verdade, é a melhora linguagem para escrever 
+qualquer coisa que precise de formatação.
+
+Exemplo 1:
+
+$$
+\begin{cases}
+H_0: p_1 = p_2 \\
+H_A: p_1 > p_2
+\end{cases}
+$$
+
+
+Exemplo 2:
+
+$$
+\begin{cases}
+H_0: p_B \leq p_A \\
+H_A: p_B > p_A
+\end{cases}
+$$
+
+
+
+
+## Exercício 3
+
+### Teste A/B
+
+Uma empresa de varejo online está testando duas páginas diferentes 
+de produto para aumentar a taxa de conversão (clientes que efetuam 
+a compra). Os visitantes do site foram aleatoriamente divididos 
+entre as duas versões:
+
+- **Versão A** (página atual):  
+  - Visitantes: 4.200  
+  - Compras: 294  
+
+- **Versão B** (nova página):  
+  - Visitantes: 4.100  
+  - Compras: 348  
+
+A equipe deseja saber se a nova versão **aumenta significativamente** 
+a taxa de conversão.
+
+**Parte 1: Teste de Hipóteses**
+
+1. Formule as hipóteses nula e alternativa para o problema.
+
+2. Realize o teste de proporção utilizando `prop.test()`, 
+  com `alternative = "greater"`.
+  
+3. Apresente o valor-p e avalie a significância ao nível de 5%.
+
+4. Interprete o resultado em termos de decisão de negócios.
+
+**Parte 2: Planejamento de Experimentos Futuros**
+
+5. Suponha que, para um próximo teste, a equipe acredite que a nova 
+página aumente a taxa de conversão de 7% para 9%. Quantos visitantes 
+devem ser alocados **por grupo** para que o teste tenha 
+**80% de poder**, com $\alpha = 0,05$?
+
+Utilize a função `pwr.2p.test()` do pacote `pwr`.
+
+```{r}
+
+
+```
+

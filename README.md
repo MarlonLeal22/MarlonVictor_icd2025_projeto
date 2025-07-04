@@ -412,3 +412,76 @@ significativa.
 **Outros:**
 
 *API (Interface de Programação de Aplicações): Um conjunto de regras e protocolos que permite que diferentes softwares se comuniquem entre si.
+
+**testes de significancia**
+
+COLOCAR NA PROVA
+
+$$
+\begin{cases}
+H_0: p = 0.50 \\
+H_A: p \neq 0.50
+\end{cases}
+$$
+
+**Funções do Pacote pwr.**
+
+*Função	Descrição
+*pwr.p.test	teste de proporção para uma amostra
+*pwr.2p.test	teste de proporção para duas amostras
+*pwr.2p2n.test	teste de proporção para duas amostras (tamanhos desiguais)
+*pwr.t.test	testes t para duas amostras, uma amostra e amostras pareadas
+*pwr.t2n.test	teste t para duas amostras (tamanhos desiguais)
+*pwr.anova.test	ANOVA balanceada de um fator
+*pwr.r.test	teste de correlação
+*pwr.chisq.test	teste qui-quadrado (ajuste de distribuição e associação)
+*pwr.f2.test	teste para o modelo linear geral
+
+Como Escrever Hipóteses com LaTeX?
+Escrevendo Hipóteses em LaTeX
+
+Em alguns exercícios, você precisará escrever as hipóteses nula (H0
+) e alternativa (HA
+).
+
+Você pode fazer isso facilmente com LaTeX, a melhor linguagem para escrever matemática, na verdade, é a melhora linguagem para escrever qualquer coisa que precise de formatação.
+
+Modelo Básico:
+$$
+\begin{cases}
+H_0: p_1 = p_2 \\
+H_A: p_1 > p_2
+\end{cases}
+$$
+
+produz:
+
+{H0:p1=p2HA:p1>p2
+
+$$ ... $$ → abre uma equação centralizada
+\begin{cases} ... \end{cases} → cria um bloco alinhado de hipóteses
+H_0, H_A → índices usando underline _
+p_1, p_2, \mu_1, \mu_2 → parâmetros como proporções ou médias
+Sinais Matemáticos Úteis no LaTeX:
+Símbolo	Código LaTeX	Significado	Exemplo
+=	=	Igual	H_0: p_1 = p_2
+≠	\neq	Diferente	H_A: p_1 \neq p_2
+>	>	Maior	H_A: \mu_1 > \mu_2
+<	<	Menor	H_A: p_1 < p_2
+≥	\geq	Maior ou igual	H_0: p_B \geq p_A
+≤	\leq	Menor ou igual	H_0: \mu_1 \leq \mu_2
+Exemplo com \leq:
+$$
+\begin{cases}
+H_0: p_B \leq p_A \\
+H_A: p_B > p_A
+\end{cases}
+$$
+
+produz:
+
+{H0:pB≤pAHA:pB>pA
+
+Esse tipo de hipótese é comum quando queremos mostrar melhoria ou aumento em relação a uma condição atual.
+
+Você pode copiar e adaptar esses modelos nos exercícios!
