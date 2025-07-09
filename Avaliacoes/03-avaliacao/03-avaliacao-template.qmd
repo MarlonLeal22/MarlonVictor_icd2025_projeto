@@ -1,0 +1,231 @@
+---
+title: "Avaliação 3 - Valor: 34 pontos"
+subtitle: "Introdução à Ciência de Dados - 2025 <br> Bacharelado em Administração"
+author:   
+  - Johnny Tobias   
+  - Kelry Fernanda
+  - Marlon Victor
+  - Paula Mota
+title-block-banner: "#27445C"
+format:
+  html:
+    embed-resources: true
+    page-layout: article
+    toc: true
+    toc-location: left
+lang: "pt"
+date: 2025-07-09
+date-format: long
+execute:
+  eval: true
+  echo: true
+  warning: false
+  message: false
+---
+
+
+
+```{r}
+#| label: setup
+#| echo: false
+
+# configura a exbição de números decimais
+options(digits = 3, scipen = 999)
+
+# pacotes utilizados
+library(tidyverse)
+library(ggpubr)
+```
+
+
+
+
+## Questão 1
+
+### Inferência sobre Proporções Populacionais
+
+**a)** 
+
+```{r}
+# Dados da pesquisa
+cat_clientes_A <- 273
+cat_satisf_A <- 350
+
+cat_clientes_B <- 198
+cat_satisf_B <- 290
+
+```
+
+
+```{r}
+# Estimativa pontual da proporção de clientes satisfeitos do grupo A
+prop_a <- cat_clientes_A / cat_satisf_A
+prop_a 
+```
+
+
+```{r}
+# Estimativa pontual da proporção de clientes satisfeitos do grupo B
+prop_b <- cat_clientes_B / cat_satisf_B
+prop_b
+```
+
+
+```{r}
+# Estimativa pontual da diferença entre as proporções
+# Exibe a diferença entre eles
+diferenca_observada <- prop_b - prop_a
+diferenca_observada
+```
+
+
+
+
+**b)** 
+b) Por que em uma análise estatisticamente fundamentada, é incorreto reportar somente estimativas pontuais dos parâmetros da população?
+
+Porque elas não fornecem nenhuma informação sobre a incerteza da estimativa e a precisão. A estimativa pontual pode ser o nosso melhor "chute" para o valores de um parâmetro populacional com base na amostragem quantificando o as incertezas sobre ele. E para uma análise mais detalhada e útil essa informação sobre a incerteza não pode faltar.
+
+
+
+**c)** 
+
+
+```{r}
+# Intervalo de confiança para a diferença entre proporções
+resultado <- prop.test(x = c(cat_clientes_B, cat_clientes_A),
+                       n = c(cat_satisf_B, cat_satisf_A),
+                       conf.level = 0.95)
+
+# Exibir resultado completo
+resultado
+
+```
+
+
+
+**d)** 
+O intervalo obtido foi de -0.17 e 0.026 podemos perceber que com esse intervalo como o zero não está incluso, concluímos que isso indica uma diferença estatis ticamente significativa.Com quase 10 pontos percentuais de diferença a categoria A teve maior proporção de satisfação, isso evidencia que a categoria B teve uma inferior.
+
+
+
+**e.1)** 
+
+
+$$
+\begin{cases}
+H_0: p_A\le 0.70\\
+H_A: p_A > 0.70
+\end{cases}
+$$
+
+
+**e.2)** 
+ 
+
+```{r}
+# Teste de hipótese unilateral para proporção da Categoria A
+
+# Intervalo de confiança para a diferença entre proporções
+resultado_teste_A <- prop.test(x = cat_clientes_A,
+                               n = cat_satisf_A,
+                               p = 0.70,
+                               alternative = "greater",
+                               conf.level = 0.95)
+# Exibir resultado completo
+resultado_teste_A
+```
+
+
+
+**e.3)** 
+
+O teste de hipótese resultou em um valor-p de 0.00067 para a proporção de clientes satisfeitos na categoria A. Considerando que um nível de significância alpha seja = 0.05, podemos observar que o valor-p é menor que alpha. 
+E com base nessas observações, rejeitamos a hipótese nula. Isso quer dizer que há evidências estatisticamente significativa com 95% de confiança para concluir que a proporção de clientes satisfeitos na categoria A é bem maior que 70%.
+
+
+
+## Questão 2
+
+### Inferência sobre Médias Populacionais
+
+```{r}
+# Cria a data.frame dados_entrega
+dados_entrega <- data.frame(
+  tempo = c(
+    1.9908307, 3.7595980, 3.9207872, 1.9499968, 2.5570788, 2.9083451, 
+    3.8215787, 3.4254931, 4.1066170, 3.7159112, 2.3757705, 4.3799877, 
+    4.0898537, 4.6885358, 1.9032753, 4.9526208, 4.7632426, 3.5487350, 
+    5.2520306, 4.5840950, 2.7728566, 1.6544221, 1.9158527, 3.3874123,
+    3.1677474, 4.2208561, 2.7834305, 2.9044544, 4.5360855, 2.2195599, 
+    2.7240852, 2.6655864, 1.4009759, 3.4665378, 3.3535627, 4.6972176, 
+    1.9733366, 2.5457229, 2.2336230, 2.6573906, 2.6681639, 3.1323411, 
+    2.4254247, 2.7917952, 4.9867621, 2.8329370, 2.8299644, 3.5470596, 
+    1.4070574, 3.1499424, 1.9685541, 2.4178228, 3.4466604, 3.6865291, 
+    3.3801921, 3.5045991, 2.2455080, 4.4135944, 3.2958687, 3.3348655, 
+    0.2198195, 1.6197339, 2.4793752, 3.6855232, 2.6521006, 4.5120387, 
+    4.4196294, 1.1254838, 2.1009464, 1.8516211, 2.5130132, 2.6551619, 
+    0.8074057, 4.2885169, 2.6779839
+  ),
+  parceiro = c(
+    rep("Atual", 35),
+    rep("Novo", 40)
+  )
+)
+```
+
+
+
+**a)** 
+
+
+```{r}
+# Gráfico quantile-quantile para verificar normalidade dos dados
+ggqqplot(dados_entrega, x = "tempo", color = "parceiro") +
+  labs(title = "Verificação de Normalidade por Grupo")
+```
+Como estão perto da linha teórica, isso indica que os tempos de entrega seguem aproximadamente uma distribuição normal. ja o desvio patrao tem uma pequena anormalidade mas é normal pode ser um atraso na entrega ou um adiantamento.
+
+
+
+**b)**
+
+
+```{r}
+# Estimativa por intervalo de confiança para a diferença entre médias 
+resultado_ttest <- t.test(tempo ~ parceiro,
+                          data = dados_entrega,
+                          conf.level = 0.95)
+# mostra o resultado
+resultado_ttest
+
+```
+
+
+
+
+**c)** 
+```{r}
+# Definindo uma variavel para a media atual e media novo
+media_atual <- resultado_ttest$estimate[1]
+media_novo  <- resultado_ttest$estimate[2]
+
+# Diferença estimada entre as medias
+diferenca_estimada <- media_atual - media_novo
+
+# mostrando o resultado da diferença estimada.
+diferenca_estimada
+```
+
+Olhando apenas na estimativa pontual da diferença média, o parceiro Atual parece ter maiores tempos médios de entrega
+
+**d)** 
+
+O intervalo de confiança de 95% para a diferença das médias -0.0005122, 0.9624656, podemos perceber que o intervalo inclui o valor zero. A inclusão do zero no intervalo de confiança implica que uma diferença de zero (ou seja, não existe nenhuma diferença real entre os tempos médios populacionais) é um valor compreensível, de acordo com os dados observados. Contudo, não há base estatística suficiente para concluirmos que há uma diferença significativa nos tempos médios de entrega entre os dois parceiros.
+
+
+
+
+
+
+
